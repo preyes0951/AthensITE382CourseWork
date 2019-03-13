@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Grade Generator</string>
+    <string name="strPrev">Previous</string>
+    <string name="strNext">Next</string>
+    <string name="strExistsWarning">Student Already Exists</string>
+    <string name="strNotExistsAdded">Student Added</string>
+    <string name="strEdit">Edit</string>
+    <string name="strSave">Save</string>
+    <string name="strRand">Randomize</string>
+</resources>
