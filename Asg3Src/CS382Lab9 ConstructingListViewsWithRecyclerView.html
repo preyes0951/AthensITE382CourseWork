@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2019-02-22 Fri 11:58 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CS 382 Lab 9: Constructing list views with RecyclerView</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Adam Lewis" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">CS 382 Lab 9: Constructing list views with RecyclerView</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org9aab859">1. Objectives:</a></li>
+<li><a href="#org00b685c">2. Background</a>
+<ul>
+<li><a href="#org06a3e9e">2.1. The theory</a></li>
+<li><a href="#org5ed6ac3">2.2. The six steps</a></li>
+</ul>
+</li>
+<li><a href="#orge3f047f">3. Instructions</a>
+<ul>
+<li><a href="#org17438e8">3.1. Lab setup</a></li>
+<li><a href="#org3beec50">3.2. Updating the UI</a></li>
+<li><a href="#org01f29c4">3.3. Putting the infrastructure in place for a list view</a></li>
+<li><a href="#orgf56482b">3.4. Building the required layout files</a></li>
+<li><a href="#org7abae96">3.5. Now to the code behind</a></li>
+<li><a href="#orge87dc43">3.6. Now let's link the recycler view to a fragment</a></li>
+</ul>
+</li>
+<li><a href="#org38b9862">4. Submit your lab for grading</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9aab859" class="outline-2">
+<h2 id="org9aab859"><span class="section-number-2">1</span> Objectives:</h2>
+<div class="outline-text-2" id="text-1">
+<ol class="org-ol">
+<li>Work with multiple fragments in an application</li>
+<li>Go through the process of using Android's RecyclerView class to
+build a list based application</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org00b685c" class="outline-2">
+<h2 id="org00b685c"><span class="section-number-2">2</span> Background</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The classes in the Android class library for building list controls is
+extremely powerful but painfully difficult to use.
+</p>
+</div>
+<div id="outline-container-org06a3e9e" class="outline-3">
+<h3 id="org06a3e9e"><span class="section-number-3">2.1</span> The theory</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+There are four sets of classes that you must grok:
+</p>
+<ol class="org-ol">
+<li>The RecyclerView class</li>
+<li>RecyclerView.Adapter: deals with the data connection and binding
+the data connection to the view</li>
+<li>LayoutManager: This is the top-level in the sub-tree in the view
+hierarchy for a RecyclerView.  It manages how items are
+positioned in a list.</li>
+<li>ItemAnimator: helper class for animating actions like addition or
+removal of an item from a list</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org5ed6ac3" class="outline-3">
+<h3 id="org5ed6ac3"><span class="section-number-3">2.2</span> The six steps</h3>
+<div class="outline-text-3" id="text-2-2">
+<ol class="org-ol">
+<li>Add the RecyclerView support library to the gradle build file</li>
+<li>Make certain that your model class provides a way to get at the
+model contents as a list</li>
+<li>Create a fragment XML file for the overall list</li>
+<li>Create a custom row layout XML file for the individual items</li>
+<li>Extend the RecyclerView.Adapter and ViewHolder classes to render
+the items</li>
+<li>Bind the adapter to the model data source to populate the RecyclerView</li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge3f047f" class="outline-2">
+<h2 id="orge3f047f"><span class="section-number-2">3</span> Instructions</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Our starting point is the source code for Lab 05.
+</p>
+</div>
+<div id="outline-container-org17438e8" class="outline-3">
+<h3 id="org17438e8"><span class="section-number-3">3.1</span> Lab setup</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Make certain that Android Studio is NOT running.   Find the folder
+holding the source files for the application and manually copy that
+folder to a new location.
+</p>
+
+<p>
+Start Android Studio and load the copy of the Lab 05 project.
+Synchronize the files and gradle by selecting Synchronize from the
+File menu.
+</p>
+</div>
+</div>
+<div id="outline-container-org3beec50" class="outline-3">
+<h3 id="org3beec50"><span class="section-number-3">3.2</span> Updating the UI</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+We begin by modifying the GradeActivity to support display of two
+fragments at one time.   Add an additional FrameLayout to the
+activity layout file.   Your XML should look like this:
+</p>
+<div class="org-src-container">
+<pre class="src src-xml"><span style="color: #8b2252;">&lt;?</span><span style="color: #a020f0;">xml</span><span style="color: #8b2252;"> </span><span style="color: #8b2252;">version="1.0" encoding="utf-8"</span><span style="color: #8b2252;">?&gt;</span>
+&lt;<span style="color: #0000ff;">RelativeLayout</span> <span style="color: #483d8b;">xmlns</span>:<span style="color: #a0522d;">android</span> =<span style="color: #8b2252;">"http://schemas.android.com/apk/res/android"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>=<span style="color: #8b2252;">"match_parent"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>=<span style="color: #8b2252;">"match_parent"</span> &gt;
+
+    &lt;<span style="color: #0000ff;">FrameLayout</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span> =<span style="color: #8b2252;">"@+id/fragment_container_nav"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span> =<span style="color: #8b2252;">"match_parent"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span> =<span style="color: #8b2252;">"wrap_content"</span>&gt;
+    &lt;/<span style="color: #0000ff;">FrameLayout</span>&gt;
+
+    &lt;<span style="color: #0000ff;">FrameLayout</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span> =<span style="color: #8b2252;">"@+id/fragment_container_grade"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span> =<span style="color: #8b2252;">"match_parent"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span> =<span style="color: #8b2252;">"wrap_content"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_below</span>=<span style="color: #8b2252;">"@id/fragment_container_nav"</span>&gt;
+    &lt;/<span style="color: #0000ff;">FrameLayout</span>&gt;
+&lt;/<span style="color: #0000ff;">RelativeLayout</span>&gt;
+</pre>
+</div>
+
+<p>
+Now create a new layout for our navigation buttons (remember, we
+added them but did nothing with them in the last lab).   Move the
+entire GridLayout from the student master layout to your new file.
+This should look like:
+</p>
+<div class="org-src-container">
+<pre class="src src-xml">?xml version="1.0" encoding="utf-8"?&gt;
+&lt;<span style="color: #0000ff;">GridLayout</span> <span style="color: #483d8b;">xmlns</span>:<span style="color: #a0522d;">android</span>="http://schemas.android.com/apk/res/android"
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>="match_parent"
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>="match_parent"
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_alignParentRight</span>="true"&gt;
+    &lt;<span style="color: #0000ff;">Button</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span>="@+id/prev_student"
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_gravity</span>="left"
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">text</span>="@string/strPrev" /&gt;
+    &lt;<span style="color: #0000ff;">Button</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span>="@+id/next_student"
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_gravity</span>="right"
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">text</span>="@string/strNext" /&gt;
+&lt;/<span style="color: #0000ff;">GridLayout</span>&gt;
+</pre>
+</div>
+
+<p>
+Now for the code-behind for the navigation fragment. Add a new class
+NavigationFragment that extends Fragment and loads the buttons:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #a020f0;">public</span> <span style="color: #a020f0;">class</span> <span style="color: #228b22;">NavigationFragment</span> <span style="color: #a020f0;">extends</span> <span style="color: #228b22;">Fragment</span> {
+    <span style="color: #228b22;">Button</span> <span style="color: #a0522d;">mPrevButton</span>;
+    <span style="color: #228b22;">Button</span> <span style="color: #a0522d;">mNextButton</span>;
+
+    <span style="color: #008b8b;">@Nullable</span>
+    <span style="color: #008b8b;">@Override</span>
+    <span style="color: #a020f0;">public</span> <span style="color: #228b22;">View</span> <span style="color: #0000ff;">onCreateView</span>(<span style="color: #228b22;">LayoutInflater</span> <span style="color: #a0522d;">inflater</span>, <span style="color: #228b22;">ViewGroup</span> <span style="color: #a0522d;">container</span>, <span style="color: #228b22;">Bundle</span> <span style="color: #a0522d;">savedInstanceState</span>) {
+        <span style="color: #228b22;">View</span> <span style="color: #a0522d;">v</span> = inflater.inflate(R.layout.navigation_fragment,container,<span style="color: #008b8b;">false</span>);
+        mNextButton = (<span style="color: #228b22;">Button</span>) v.findViewById(R.id.next_student);
+        mPrevButton = (<span style="color: #228b22;">Button</span>) v.findViewById(R.id.prev_student);
+
+        mNextButton.setOnClickListener(<span style="color: #a020f0;">new</span> <span style="color: #008b8b;">View</span>.<span style="color: #228b22;">OnClickListener</span>() {
+                                           <span style="color: #008b8b;">@Override</span>
+                                           <span style="color: #a020f0;">public</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">onClick</span>(<span style="color: #228b22;">View</span> <span style="color: #a0522d;">v</span>) {
+                                               <span style="color: #b22222;">// </span><span style="color: #b22222;">Do nothing for now</span>
+                                           }
+                                       }
+        );
+
+        mPrevButton.setOnClickListener(<span style="color: #a020f0;">new</span> <span style="color: #008b8b;">View</span>.<span style="color: #228b22;">OnClickListener</span>() {
+                                           <span style="color: #008b8b;">@Override</span>
+                                           <span style="color: #a020f0;">public</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">onClick</span>(<span style="color: #228b22;">View</span> <span style="color: #a0522d;">v</span>) {
+                                               <span style="color: #b22222;">// </span><span style="color: #b22222;">Do nothing for now</span>
+                                           }
+                                       }
+        );
+        <span style="color: #a020f0;">return</span> v;
+    }
+
+}
+</pre>
+</div>
+
+<p>
+Now modify the activity to use the new structure:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #a020f0;">public</span> <span style="color: #a020f0;">class</span> <span style="color: #228b22;">GradeActivity</span> <span style="color: #a020f0;">extends</span> <span style="color: #228b22;">AppCompatActivity</span> {
+    <span style="color: #008b8b;">@Override</span>
+    <span style="color: #a020f0;">protected</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">onCreate</span>(<span style="color: #228b22;">Bundle</span> <span style="color: #a0522d;">savedInstanceState</span>) {
+        <span style="color: #a020f0;">super</span>.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_grade);
+        <span style="color: #228b22;">FragmentManager</span> <span style="color: #a0522d;">fm</span> = getFragmentManager();
+        <span style="color: #228b22;">Fragment</span> <span style="color: #a0522d;">fragment_grade</span> = fm.findFragmentById(R.id.fragment_container_grade);
+        <span style="color: #a020f0;">if</span> (fragment_grade == <span style="color: #008b8b;">null</span>) {
+            fragment_grade = <span style="color: #a020f0;">new</span> <span style="color: #228b22;">StudentMasterFragment</span>();
+            fm.beginTransaction()
+                    .add(R.id.fragment_container_grade,fragment_grade)
+                    .commit();
+        }
+        <span style="color: #228b22;">Fragment</span> <span style="color: #a0522d;">fragment_nav</span> = fm.findFragmentById(R.id.fragment_container_nav);
+        <span style="color: #a020f0;">if</span> (fragment_nav == <span style="color: #008b8b;">null</span>) {
+            fragment_nav = <span style="color: #a020f0;">new</span> <span style="color: #228b22;">NavigationFragment</span>();
+            fm.beginTransaction()
+                    .add(R.id.fragment_container_nav,fragment_nav)
+                    .commit();
+        }
+    }
+}
+</pre>
+</div>
+
+<p>
+Build and run your application.
+</p>
+</div>
+</div>
+<div id="outline-container-org01f29c4" class="outline-3">
+<h3 id="org01f29c4"><span class="section-number-3">3.3</span> Putting the infrastructure in place for a list view</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Our first task will be to extend our existing model class to support
+working with a RecyclerView.   The RecyclerView works with best with
+objects that support Java's List interface.   So, we will add a new
+method that will return an ArrayList of the keys of the student
+HashMap.
+</p>
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #a020f0;">public</span> <span style="color: #228b22;">array</span>&lt;<span style="color: #228b22;">String</span>&gt; <span style="color: #0000ff;">buildAList</span>() {
+  <span style="color: #a020f0;">return</span> <span style="color: #a020f0;">new</span> <span style="color: #228b22;">ArrayList</span>&lt;<span style="color: #228b22;">String</span>&gt;(studentMap.keySet());
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf56482b" class="outline-3">
+<h3 id="orgf56482b"><span class="section-number-3">3.4</span> Building the required layout files</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+The overall list requires that we create a content holder with a
+RecyclerView item.  Create a new layout named studentlist.xml with
+the following content:
+</p>
+<div class="org-src-container">
+<pre class="src src-xml"><span style="color: #8b2252;">&lt;?</span><span style="color: #a020f0;">xml</span><span style="color: #8b2252;"> </span><span style="color: #8b2252;">version="1.0" encoding="utf-8"</span><span style="color: #8b2252;">?&gt;</span>
+&lt;<span style="color: #0000ff;">LinearLayout</span> <span style="color: #483d8b;">xmlns</span>:<span style="color: #a0522d;">android</span>=<span style="color: #8b2252;">"http://schemas.android.com/apk/res/android"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>=<span style="color: #8b2252;">"match_parent"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>=<span style="color: #8b2252;">"match_parent"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span>=<span style="color: #8b2252;">"@+id/studentListLayout"</span>&gt;
+
+    &lt;<span style="color: #0000ff;">android.support.v7.widget.RecyclerView</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>=<span style="color: #8b2252;">"match_parent"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>=<span style="color: #8b2252;">"match_parent"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span>=<span style="color: #8b2252;">"@+id/aStudentList"</span>/&gt;
+
+&lt;/<span style="color: #0000ff;">LinearLayout</span>&gt;
+</pre>
+</div>
+
+<p>
+And then we build a layout file named studentlistrow.xml for the rows of the list:
+</p>
+<div class="org-src-container">
+<pre class="src src-xml"><span style="color: #8b2252;">&lt;?</span><span style="color: #a020f0;">xml</span><span style="color: #8b2252;"> </span><span style="color: #8b2252;">version="1.0" encoding="utf-8"</span><span style="color: #8b2252;">?&gt;</span>
+&lt;<span style="color: #0000ff;">LinearLayout</span> <span style="color: #483d8b;">xmlns</span>:<span style="color: #a0522d;">android</span>=<span style="color: #8b2252;">"http://schemas.android.com/apk/res/android"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">orientation</span>=<span style="color: #8b2252;">"horizontal"</span> <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>=<span style="color: #8b2252;">"match_parent"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>=<span style="color: #8b2252;">"wrap_content"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">paddingTop</span>=<span style="color: #8b2252;">"10dp"</span>
+    <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">paddingBottom</span>=<span style="color: #8b2252;">"10dp"</span> &gt;
+    &lt;<span style="color: #0000ff;">TextView</span> <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span>=<span style="color: #8b2252;">"@+id/listrowname"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>=<span style="color: #8b2252;">"0dp"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>=<span style="color: #8b2252;">"wrap_content"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_weight</span>=<span style="color: #8b2252;">"1"</span>
+        /&gt;
+
+    &lt;<span style="color: #0000ff;">Button</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">id</span>=<span style="color: #8b2252;">"@+id/editstudent"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_width</span>=<span style="color: #8b2252;">"wrap_content"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">layout_height</span>=<span style="color: #8b2252;">"wrap_content"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">paddingLeft</span>=<span style="color: #8b2252;">"16dp"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">paddingRight</span>=<span style="color: #8b2252;">"16dp"</span>
+        <span style="color: #483d8b;">android</span>:<span style="color: #a0522d;">textSize</span>=<span style="color: #8b2252;">"10sp"</span> /&gt;
+&lt;/<span style="color: #0000ff;">LinearLayout</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7abae96" class="outline-3">
+<h3 id="org7abae96"><span class="section-number-3">3.5</span> Now to the code behind</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+The linkage between the model and controller with RecyclerView is an
+Adapter class.  One will extend RecyclerView.Adapter&lt;&gt; in your app
+with the extension templated with a extension of the ViewHolder
+class.
+</p>
+
+<p>
+Create a new class named StudentAdapter that extends the appropriate
+class.   Add two member variables to store the list of names and a
+context class that gives the UI context in which we are working:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #a020f0;">public</span> <span style="color: #a020f0;">class</span> <span style="color: #228b22;">StudentAdapter</span> <span style="color: #a020f0;">extends</span> <span style="color: #008b8b;">RecyclerView</span>.<span style="color: #228b22;">Adapter</span>&lt;<span style="color: #008b8b;">StudentAdapter</span>.<span style="color: #228b22;">ViewHolder</span>&gt; {
+    <span style="color: #a020f0;">private</span> <span style="color: #228b22;">List</span>&lt;<span style="color: #228b22;">String</span>&gt; <span style="color: #a0522d;">listOfStudentNames</span>;
+    <span style="color: #a020f0;">private</span> <span style="color: #228b22;">Context</span> <span style="color: #a0522d;">studentAdapterContext</span>;
+
+    <span style="color: #a020f0;">public</span> <span style="color: #0000ff;">StudentAdapter</span>(<span style="color: #228b22;">List</span>&lt;<span style="color: #228b22;">String</span>&gt; <span style="color: #a0522d;">listOfStudentNames</span>, <span style="color: #228b22;">Context</span> <span style="color: #a0522d;">studentAdapterContext</span>) {
+        <span style="color: #a020f0;">this</span>.listOfStudentNames = listOfStudentNames;
+        <span style="color: #a020f0;">this</span>.studentAdapterContext = studentAdapterContext;
+    }
+
+    <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Context</span> <span style="color: #0000ff;">getStudentAdapterContext</span>() {
+        <span style="color: #a020f0;">return</span> studentAdapterContext;
+    }
+}
+</pre>
+</div>
+
+<p>
+The ViewHolder subclass is implemented as an inner class within the
+Adapter.  Add the following code within the StudentAdapter class.
+This will extend RecyclerView.ViewHolder and will inflate the text
+view and button in each line item:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #a020f0;">public</span> <span style="color: #a020f0;">class</span> <span style="color: #228b22;">ViewHolder</span> <span style="color: #a020f0;">extends</span> <span style="color: #008b8b;">RecyclerView</span>.<span style="color: #228b22;">ViewHolder</span> {
+    <span style="color: #a020f0;">public</span> <span style="color: #228b22;">TextView</span> <span style="color: #a0522d;">nameTextView</span>;
+    <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Button</span> <span style="color: #a0522d;">editButton</span>;
+
+    <span style="color: #a020f0;">public</span> <span style="color: #0000ff;">ViewHolder</span>(<span style="color: #228b22;">View</span> <span style="color: #a0522d;">itemView</span>) {
+        <span style="color: #a020f0;">super</span>(itemView);
+        nameTextView = (<span style="color: #228b22;">TextView</span>) itemView.findViewById(R.id.listrowname);
+        editButton = (<span style="color: #228b22;">Button</span>) itemView.findViewById(R.id.editstudent);
+    }
+}
+
+</pre>
+</div>
+
+
+<p>
+And now the heavy lifting.  Here we have to create a ViewHolder that
+maintains the view for each line item:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"> <span style="color: #008b8b;">@Override</span>
+ <span style="color: #a020f0;">public</span> <span style="color: #008b8b;">StudentAdapter</span>.<span style="color: #228b22;">ViewHolder</span> <span style="color: #0000ff;">onCreateViewHolder</span>(<span style="color: #228b22;">ViewGroup</span> <span style="color: #a0522d;">parent</span>, 
+                                                       <span style="color: #228b22;">int</span> <span style="color: #a0522d;">viewType</span>) {
+   <span style="color: #228b22;">Context</span> <span style="color: #a0522d;">context</span> = parent.getContext();
+   <span style="color: #228b22;">LayoutInflater</span> <span style="color: #a0522d;">inflater</span> = LayoutInflater.from(context);
+   <span style="color: #228b22;">View</span> <span style="color: #a0522d;">studentListView</span> = inflater.inflate(R.layout.studentlistrow, parent, <span style="color: #008b8b;">false</span>);
+   <span style="color: #228b22;">ViewHolder</span> <span style="color: #a0522d;">viewHolder</span> = <span style="color: #a020f0;">new</span> <span style="color: #228b22;">ViewHolder</span>(studentListView);
+   <span style="color: #a020f0;">return</span> viewHolder;
+}
+</pre>
+</div>
+
+<p>
+And as the one scrolls through the list, we need to bind a
+ViewHolder to a row:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"> <span style="color: #008b8b;">@Override</span>
+ <span style="color: #a020f0;">public</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">onBindViewHolder</span>(<span style="color: #008b8b;">StudentAdapter</span>.<span style="color: #228b22;">ViewHolder</span> <span style="color: #a0522d;">holder</span>, <span style="color: #228b22;">int</span> <span style="color: #a0522d;">position</span>) {
+   <span style="color: #228b22;">String</span> <span style="color: #a0522d;">name</span> = listOfStudentNames.get(position);
+   <span style="color: #228b22;">TextView</span> <span style="color: #a0522d;">textView</span> = holder.nameTextView;
+   textView.setText(name);
+   <span style="color: #228b22;">Button</span> <span style="color: #a0522d;">button</span> = holder.editButton;
+   button.setText(<span style="color: #8b2252;">"Edit"</span>);
+}
+</pre>
+</div>
+
+<p>
+And finally, we need to inform everyone how many items are in the list:
+</p>
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #008b8b;">@Override</span>
+<span style="color: #a020f0;">public</span> <span style="color: #228b22;">int</span> <span style="color: #0000ff;">getItemCount</span>() {
+    <span style="color: #a020f0;">return</span> listOfStudentNames.size();
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge87dc43" class="outline-3">
+<h3 id="orge87dc43"><span class="section-number-3">3.6</span> Now let's link the recycler view to a fragment</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+Create a new class StudentListFragment that extends Fragment.  
+</p>
+
+<div class="org-src-container">
+<pre class="src src-java"><span style="color: #a020f0;">public</span> <span style="color: #a020f0;">class</span> <span style="color: #228b22;">StudentListFragment</span> <span style="color: #a020f0;">extends</span> <span style="color: #228b22;">Fragment</span> {
+ <span style="color: #a020f0;">public</span> <span style="color: #228b22;">View</span> <span style="color: #0000ff;">onCreateView</span>(<span style="color: #228b22;">LayoutInflater</span> <span style="color: #a0522d;">inflater</span>, 
+                             <span style="color: #228b22;">ViewGroup</span> <span style="color: #a0522d;">container</span>, 
+                             <span style="color: #228b22;">Bundle</span> <span style="color: #a0522d;">savedInstanceState</span>) {
+    <span style="color: #228b22;">RecyclerView</span> <span style="color: #a0522d;">listView</span>;
+    <span style="color: #008b8b;">RecyclerView</span>.<span style="color: #228b22;">LayoutManager</span> <span style="color: #a0522d;">layoutManager</span>;
+    <span style="color: #228b22;">View</span> <span style="color: #a0522d;">rootView</span> = (<span style="color: #228b22;">View</span>) inflater.inflate(R.layout.studentlist,
+                                              container, 
+                                              <span style="color: #008b8b;">false</span>);
+    listView = (<span style="color: #228b22;">RecyclerView</span>) rootView.findViewById(R.id.aStudentList);
+    layoutManager = <span style="color: #a020f0;">new</span> <span style="color: #228b22;">LinearLayoutManager</span>(getActivity());
+    <span style="color: #228b22;">StudentAdapter</span> <span style="color: #a0522d;">adapter</span> = <span style="color: #a020f0;">new</span> <span style="color: #228b22;">StudentAdapter</span>(Cohort.getCohort().buildAList(),
+                                                    getContext());
+    listView.setAdapter(adapter);
+    listView.setLayoutManager(layoutManager);
+    <span style="color: #a020f0;">return</span> rootView;
+ }
+}
+</pre>
+</div>
+
+<p>
+Change the reference to StudentMasterFragment in the activity class
+to StudentListFragment.
+</p>
+
+<p>
+Build and run your application.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org38b9862" class="outline-2">
+<h2 id="org38b9862"><span class="section-number-2">4</span> Submit your lab for grading</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Build a PDF file containing your project and upload the resulting PDF
+file to Blackboard by attaching it to the lab's entry on the
+course web page.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2012-08-20 Mon</p>
+<p class="author">Author: Adam Lewis</p>
+<p class="date">Created: 2019-02-22 Fri 11:58</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
